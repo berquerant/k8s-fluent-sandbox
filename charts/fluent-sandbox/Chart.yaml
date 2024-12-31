@@ -1,0 +1,12 @@
+apiVersion: v2
+name: fluent-sandbox
+description: A Helm chart for fluent sandbox
+type: application
+maintainers:
+  - name: berquerant
+version: 0.1.0
+appVersion: "1.16.0"
+keywords:
+  - fluent
+  - sandbox
+home: https://github.com/berquerant/k8s-fluent-sandbox

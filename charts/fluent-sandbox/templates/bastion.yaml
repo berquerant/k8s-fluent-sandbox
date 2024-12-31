@@ -1,0 +1,79 @@
+{{- if .Values.bastionEnabled }}
+{{- $dot := . -}}
+{{- $value := .Values.bastion -}}
+{{- $bastionName := printf "%s-bastion" (include "fluent-sandbox.fullname" $dot) -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $bastionName }}
+  labels:
+    {{- include "fluent-sandbox.labels" $dot | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "fluent-sandbox.bastionAppLabels" $dot | nindent 6 }}
+      {{- include "fluent-sandbox.selectorLabels" $dot | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ tpl (.Files.Get "files/usr/local/bin/send.sh") . | sha256sum }}
+      {{- with $value.annotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "fluent-sandbox.bastionAppLabels" $dot | nindent 8 }}
+        {{- include "fluent-sandbox.selectorLabels" $dot | nindent 8 }}
+        {{- with $value.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with $value.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $value.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $value.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $value.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: bastion-conf
+          configMap:
+            defaultMode: 0777
+            name: {{ $bastionName }}
+      containers:
+        - name: bastion
+          image: "{{ $value.image.repository }}:{{ $value.image.tag }}"
+          imagePullPolicy: {{ $value.image.pullPolicy }}
+          securityContext:
+            {{- toYaml $value.securityContext | nindent 12 }}
+          {{- with $value.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          tty: {{ $value.tty }}
+          volumeMounts:
+            - name: bastion-conf
+              mountPath: /usr/local/bin/send
+              readOnly: true
+              subPath: send.sh
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $bastionName }}
+  labels:
+    {{- include "fluent-sandbox.labels" . | nindent 4 }}
+data:
+  send.sh: |-
+    {{- tpl (.Files.Get "files/usr/local/bin/send.sh") . | nindent 4 }}
+{{- end }}

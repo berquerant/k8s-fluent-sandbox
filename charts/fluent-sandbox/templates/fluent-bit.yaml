@@ -1,0 +1,182 @@
+{{- if .Values.fluentBitEnabled }}
+{{- $dot := . }}
+{{- range $i, $value := .Values.fluentBit -}}
+{{- $fluentBitName := printf "%s-%s" (include "fluent-sandbox.fullname" $dot) (ternary (printf "fluentd-bit-%d" $i) $value.name (empty $value.name)) -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fluentBitName }}
+  labels:
+    {{- include "fluent-sandbox.labels" $dot | nindent 4 }}
+spec:
+  ports:
+    {{- range $name, $port := $value.ports }}
+    - name: {{ $name }}
+      port: {{ $port }}
+    {{- end }}
+  clusterIP: None
+  selector:
+    {{- include "fluent-sandbox.fluentBitAppLabels" $dot | nindent 4 }}
+    {{- include "fluent-sandbox.selectorLabels" $dot | nindent 4 }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $fluentBitName }}
+  labels:
+    {{- include "fluent-sandbox.fluentBitAppLabels" $dot | nindent 4 }}
+    {{- include "fluent-sandbox.labels" $dot | nindent 4 }}
+spec:
+  serviceName: {{ $fluentBitName }}
+  replicas: {{ $value.replicas }}
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      {{- include "fluent-sandbox.fluentBitAppLabels" $dot | nindent 6 }}
+      {{- include "fluent-sandbox.selectorLabels" $dot | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ $value.conf | sha256sum }}
+      {{- with $value.annotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "fluent-sandbox.fluentBitAppLabels" $dot | nindent 8 }}
+        {{- include "fluent-sandbox.selectorLabels" $dot | nindent 8 }}
+        {{- with $value.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      restartPolicy: {{ $value.restartPolicy }}
+      {{- with $value.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $value.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $value.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $value.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: fluent-bit-conf
+          configMap:
+            name: {{ $fluentBitName }}
+        {{- with $value.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: fluent-bit
+          image: "{{ $value.image.repository }}:{{ $value.image.tag }}"
+          imagePullPolicy: {{ $value.image.pullPolicy }}
+          securityContext:
+            {{- toYaml $value.securityContext | nindent 12 }}
+          {{- with $value.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $value.ports }}
+          ports:
+            {{- range $name, $port := $value.ports }}
+            - name: {{ $name }}
+              containerPort: {{ $port }}
+            {{- end }}
+          {{- end }}
+          {{- with $value.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $value.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $value.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: fluent-bit-conf
+              mountPath: /fluent-bit/etc
+              readOnly: true
+            {{- with $value.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fluentBitName }}
+  labels:
+    {{- include "fluent-sandbox.labels" $dot | nindent 4 }}
+data:
+  fluent-bit.yaml: |-
+    {{- $value.conf | nindent 4 }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $fluentBitName }}
+  annotations:
+    "helm.sh/hook": post-upgrade,post-install
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    {{- include "fluent-sandbox.fluentBitAppLabels" $dot | nindent 4 }}
+    {{- include "fluent-sandbox.labels" $dot | nindent 4 }}
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      {{- with $value.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "fluent-sandbox.fluentBitAppLabels" $dot | nindent 8 }}
+        {{- include "fluent-sandbox.labels" $dot | nindent 8 }}
+        {{- with $value.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      restartPolicy: Never
+      {{- with $value.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $value.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $value.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $value.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: fluent-bit-conf
+          configMap:
+            name: {{ $fluentBitName }}
+      containers:
+        - name: dryrun
+          image: "{{ $value.image.repository }}:{{ $value.image.tag }}"
+          imagePullPolicy: {{ $value.image.pullPolicy }}
+          securityContext:
+            {{- toYaml $value.securityContext | nindent 12 }}
+          command:
+            {{- toYaml $value.dryrunCommand | nindent 12 }}
+          volumeMounts:
+            - name: fluent-bit-conf
+              mountPath: /fluent-bit/etc
+              readOnly: true
+{{- end -}}
+{{- end }}

@@ -1,0 +1,70 @@
+name: Snapshot
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  CHART_NAME: fluent-sandbox
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      values: ${{ steps.set-matrix.outputs.values }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: generate matrix values
+        id: set-matrix
+        run: echo "values=$(.github/generate-snapshot-matrix.sh)" >> "$GITHUB_OUTPUT"
+  generate-manifests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: generate manifests
+        run: |
+          tests/generate.sh gen "$CHART_NAME" generated
+          mv tests/${CHART_NAME}/generated .
+      - name: upload manifests
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-manifests
+          path: generated
+          retention-days: 1
+  test:
+    needs:
+      - generate-matrix
+      - generate-manifests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        value: ${{ fromJson(needs.generate-matrix.outputs.values) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-manifests
+          path: generated
+      - name: move golden
+        run: mv tests/${CHART_NAME}/golden .
+      - name: objdiff
+        uses: berquerant/k8s-object-diff@v0.1.0
+        id: objdiff
+        with:
+          left: golden/${{ matrix.value }}
+          right: generated/${{ matrix.value }}
+      - name: show results
+        run: |
+          echo "${{ steps.objdiff.outputs.ids }}" | tr " " "\n"
+      - name: exit
+        run: exit ${{ steps.objdiff.outputs.status }}

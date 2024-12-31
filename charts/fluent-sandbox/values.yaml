@@ -1,0 +1,142 @@
+nameOverride: ""
+fullnameOverride: ""
+
+fluentdEnabled: true
+fluentBitEnabled: true
+bastionEnabled: true
+
+# List of StatefulSet and Service of fluentd
+fluentd:
+  - name: "fluentd"
+    image:
+      repository: fluent/fluentd
+      tag: "v1.18.0-debian-1.0"
+      pullPolicy: IfNotPresent
+    command:
+      - fluentd
+      - "--config-file-type"
+      - "yaml"
+      - "-c"
+      - "/fluentd/etc/fluent.conf"
+    dryrunCommand:
+      - fluentd
+      - "--dry-run"
+      - "--log-event-verbose"
+      - "--verbose"
+      - "--config-file-type"
+      - "yaml"
+      - "-c"
+      - "/fluentd/etc/fluent.conf"
+    conf: |
+      system:
+        log_level: debug
+      config:
+        - source:
+            $type: forward
+            bind: 0.0.0.0
+            port: 24224
+        - source:
+            $type: http
+            bind: 0.0.0.0
+            port: 28080
+        - match:
+            $type: stdout
+            $tag: '**'
+    ports:
+      forward: 24224
+      http: 28080
+    replicas: 1
+    securityContext:
+      runAsUser: 0
+    volumes: []
+    volumeMounts: []
+    imagePullSecrets: []
+    labels: {}
+    annotations: {}
+    resources: {}
+    tolerations: []
+    affinity: {}
+    nodeSelector: {}
+    restartPolicy: Always
+    livenessProbe: {}
+    readinessProbe: {}
+    startupProbe: {}
+
+# List of StatefulSet and Service of fluent-bit
+fluentBit:
+  - name: "bit"
+    image:
+      repository: fluent/fluent-bit
+      tag: "3.2.4-debug"
+      pullPolicy: IfNotPresent
+    command:
+      - /fluent-bit/bin/fluent-bit
+      - "-c"
+      - "/fluent-bit/etc/fluent-bit.yaml"
+    dryrunCommand:
+      - /fluent-bit/bin/fluent-bit
+      - "--dry-run"
+      - "--verbose"
+      - "-c"
+      - "/fluent-bit/etc/fluent-bit.yaml"
+    conf: |
+      service:
+        flush: 1
+        daemon: off
+        log_level: debug
+      pipeline:
+        inputs:
+          - name: forward
+            listen: 0.0.0.0
+            port: 24224
+          - name: http
+            listen: 0.0.0.0
+            port: 28080
+            tag_key: 'tag'
+        outputs:
+          - name: stdout
+            match: '*'
+    ports:
+      forward: 24224
+      http: 28080
+    replicas: 1
+    securityContext:
+      runAsUser: 0
+    volumes: []
+    volumeMounts: []
+    imagePullSecrets: []
+    labels: {}
+    annotations: {}
+    resources: {}
+    tolerations: []
+    affinity: {}
+    nodeSelector: {}
+    restartPolicy: Always
+    livenessProbe: {}
+    readinessProbe: {}
+    startupProbe: {}
+
+# Deployment for sending sample data
+bastion:
+  image:
+    repository: fluent/fluentd
+    tag: "v1.18.0-debian-1.0"
+    pullPolicy: IfNotPresent
+  command:
+    - bash
+    - -c
+    - |
+      set -ex
+      apt-get update
+      apt-get install -y curl
+      bash
+  tty: true
+  securityContext:
+    runAsUser: 0
+  imagePullSecrets: []
+  labels: {}
+  annotations: {}
+  resources: {}
+  tolerations: []
+  affinity: {}
+  nodeSelector: {}
