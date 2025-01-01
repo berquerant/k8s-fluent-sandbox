@@ -37,14 +37,20 @@ Examples:
 echo '{"msg":"test"}' | /usr/local/bin/send fluentd 24224 cat test.log
 ```
 
-## Bastion
+## `bastion`
 
 Deployment for sending sample data.
 
-## Fluentd
+## `fluentd`
 
 List of StatefulSet and Service of fluentd.
 
-## FluentBit
+The elements will inherit the elements of `defaultFluentd`.
+Any elements that are not specified will have the same value as the corresponding elements in `defaultFluentd`.
+
+## `fluentBit`
 
 List of StatefulSet and Service of fluent-bit.
+
+The elements will inherit the elements of `defaultFluentBit`.
+Any elements that are not specified will have the same value as the corresponding elements in `defaultFluentBit`.
