@@ -6,10 +6,9 @@ fluentBitEnabled: true
 bastionEnabled: true
 
 defaultFluentd: &defaultFluentd
-  image:
-    repository: fluent/fluentd
-    tag: "v1.18.0-debian-1.0"
-    pullPolicy: IfNotPresent
+  imageRepo: fluent/fluentd
+  imageTag: "v1.18.0-debian-1.0"
+  imagePullPolicy: IfNotPresent
   command:
     - fluentd
     - "--config-file-type"
@@ -68,10 +67,9 @@ fluentd:
   - name: "fluentd"
 
 defaultFluentBit: &defaultFluentBit
-  image:
-    repository: fluent/fluent-bit
-    tag: "3.2.4-debug"
-    pullPolicy: IfNotPresent
+  imageRepo: fluent/fluent-bit
+  imageTag: "3.2.4-debug"
+  imagePullPolicy: IfNotPresent
   command:
     - /fluent-bit/bin/fluent-bit
     - "-c"
@@ -128,10 +126,9 @@ fluentBit:
 
 # Deployment for sending sample data.
 bastion:
-  image:
-    repository: fluent/fluentd
-    tag: "v1.18.0-debian-1.0"
-    pullPolicy: IfNotPresent
+  imageRepo: fluent/fluentd
+  imageTag: "v1.18.0-debian-1.0"
+  imagePullPolicy: IfNotPresent
   command:
     - bash
     - -c

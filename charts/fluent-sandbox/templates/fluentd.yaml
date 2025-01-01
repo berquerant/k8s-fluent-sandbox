@@ -3,10 +3,9 @@
 {{- $default := $dot.Values.defaultFluentd -}}
 {{- range $i, $value := .Values.fluentd }}
 {{- $fluentdName := printf "%s-%s" (include "fluent-sandbox.fullname" $dot) (ternary (printf "fluentd-%d" $i) $value.name (empty $value.name)) -}}
-{{- $image := (default $default.image $value.image) -}}
-{{- $imageRepository := (default $default.image.repository $image.repository) -}}
-{{- $imageTag := (default $default.image.tag $image.tag) -}}
-{{- $imagePullPolicy := (default $default.image.pullPolicy $image.pullPolicy) -}}
+{{- $imageRepository := (default $default.imageRepo $value.imageRepo) -}}
+{{- $imageTag := (default $default.imageTag $value.imageTag) -}}
+{{- $imagePullPolicy := (default $default.imagePullPolicy $value.imagePullPolicy) -}}
 ---
 apiVersion: v1
 kind: Service
