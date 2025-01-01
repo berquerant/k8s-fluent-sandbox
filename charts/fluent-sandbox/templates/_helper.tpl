@@ -75,12 +75,12 @@ app: bastion
 Default forward port
 */}}
 {{- define "fluent-sandbox.defaultForwardPort" -}}
-{{ (first .Values.fluentd).ports.forward }}
+{{ .Values.defaultFluentd.ports.forward }}
 {{- end }}
 
 {{/*
 Default http port
 */}}
 {{- define "fluent-sandbox.defaultHttpPort" -}}
-{{ (first .Values.fluentd).ports.http }}
+{{ .Values.defaultFluentd.ports.http }}
 {{- end }}

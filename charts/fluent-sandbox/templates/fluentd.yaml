@@ -1,7 +1,12 @@
 {{- if .Values.fluentdEnabled }}
-{{- $dot := . }}
-{{- range $i, $value := .Values.fluentd -}}
+{{- $dot := . -}}
+{{- $default := $dot.Values.defaultFluentd -}}
+{{- range $i, $value := .Values.fluentd }}
 {{- $fluentdName := printf "%s-%s" (include "fluent-sandbox.fullname" $dot) (ternary (printf "fluentd-%d" $i) $value.name (empty $value.name)) -}}
+{{- $image := (default $default.image $value.image) -}}
+{{- $imageRepository := (default $default.image.repository $image.repository) -}}
+{{- $imageTag := (default $default.image.tag $image.tag) -}}
+{{- $imagePullPolicy := (default $default.image.pullPolicy $image.pullPolicy) -}}
 ---
 apiVersion: v1
 kind: Service
@@ -10,11 +15,13 @@ metadata:
   labels:
     {{- include "fluent-sandbox.labels" $dot | nindent 4 }}
 spec:
+  {{- with (default $default.ports $value.ports) }}
   ports:
-    {{- range $name, $port := $value.ports }}
+    {{- range $name, $port := . }}
     - name: {{ $name }}
       port: {{ $port }}
     {{- end }}
+  {{- end }}
   clusterIP: None
   selector:
     {{- include "fluent-sandbox.fluentdAppLabels" $dot | nindent 4 }}
@@ -29,7 +36,7 @@ metadata:
     {{- include "fluent-sandbox.labels" $dot | nindent 4 }}
 spec:
   serviceName: {{ $fluentdName }}
-  replicas: {{ $value.replicas }}
+  replicas: {{ default $default.replicas $value.replicas }}
   podManagementPolicy: Parallel
   selector:
     matchLabels:
@@ -38,31 +45,31 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ $value.conf | sha256sum }}
-      {{- with $value.annotations }}
+        checksum/config: {{ default $default.conf $value.conf | sha256sum }}
+      {{- with (default $default.annotations $value.annotations) }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         {{- include "fluent-sandbox.fluentdAppLabels" $dot | nindent 8 }}
         {{- include "fluent-sandbox.selectorLabels" $dot | nindent 8 }}
-        {{- with $value.labels }}
+        {{- with (default $default.labels $value.labels) }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      restartPolicy: {{ $value.restartPolicy }}
-      {{- with $value.imagePullSecrets }}
+      restartPolicy: {{ default $default.restartPolicy $value.restartPolicy }}
+      {{- with (default $default.imagePullSecrets $value.imagePullSecrets) }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $value.nodeSelector }}
+      {{- with (default $default.nodeSelector $value.nodeSelector) }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $value.affinity }}
+      {{- with (default $default.affinity $value.affinity) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $value.tolerations }}
+      {{- with (default $default.tolerations $value.tolerations) }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -70,35 +77,35 @@ spec:
         - name: fluentd-conf
           configMap:
             name: {{ $fluentdName }}
-        {{- with $value.volumes }}
+        {{- with (default $default.volumes $value.volumes) }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       containers:
         - name: fluentd
-          image: "{{ $value.image.repository }}:{{ $value.image.tag }}"
-          imagePullPolicy: {{ $value.image.pullPolicy }}
+          image: "{{ $imageRepository }}:{{ $imageTag }}"
+          imagePullPolicy: {{ $imagePullPolicy }}
           securityContext:
-            {{- toYaml $value.securityContext | nindent 12 }}
-          {{- with $value.command }}
+            {{- toYaml (default $default.securityContext $value.securityContext) | nindent 12 }}
+          {{- with (default $default.command $value.command) }}
           command:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with $value.ports }}
+          {{- with (default $default.ports $value.ports) }}
           ports:
-            {{- range $name, $port := $value.ports }}
+            {{- range $name, $port := . }}
             - name: {{ $name }}
               containerPort: {{ $port }}
             {{- end }}
           {{- end }}
-          {{- with $value.livenessProbe }}
+          {{- with (default $default.livenessProbe $value.livenessProbe) }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with $value.readinessProbe }}
+          {{- with (default $default.readinessProbe $value.readinessProbe) }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with $value.startupProbe }}
+          {{- with (default $default.startupProbe $value.startupProbe) }}
           startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -106,7 +113,7 @@ spec:
             - name: fluentd-conf
               mountPath: /fluentd/etc
               readOnly: true
-            {{- with $value.volumeMounts }}
+            {{- with (default $default.volumeMounts $value.volumeMounts) }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
 ---
@@ -118,7 +125,7 @@ metadata:
     {{- include "fluent-sandbox.labels" $dot | nindent 4 }}
 data:
   fluent.conf: |-
-    {{- $value.conf | nindent 4 }}
+    {{- default $default.conf $value.conf | nindent 4 }}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -134,31 +141,31 @@ spec:
   backoffLimit: 3
   template:
     metadata:
-      {{- with $value.annotations }}
+      {{- with (default $default.annotations $value.annotations) }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
         {{- include "fluent-sandbox.fluentdAppLabels" $dot | nindent 8 }}
         {{- include "fluent-sandbox.labels" $dot | nindent 8 }}
-        {{- with $value.labels }}
+        {{- with (default $default.labels $value.labels) }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
       restartPolicy: Never
-      {{- with $value.imagePullSecrets }}
+      {{- with (default $default.imagePullSecrets $value.imagePullSecrets) }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $value.nodeSelector }}
+      {{- with (default $default.nodeSelector $value.nodeSelector) }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $value.affinity }}
+      {{- with (default $default.affinity $value.affinity) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $value.tolerations }}
+      {{- with (default $default.tolerations $value.tolerations) }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -168,15 +175,15 @@ spec:
             name: {{ $fluentdName }}
       containers:
         - name: dryrun
-          image: "{{ $value.image.repository }}:{{ $value.image.tag }}"
-          imagePullPolicy: {{ $value.image.pullPolicy }}
+          image: "{{ $imageRepository }}:{{ $imageTag }}"
+          imagePullPolicy: {{ $imagePullPolicy }}
           securityContext:
-            {{- toYaml $value.securityContext | nindent 12 }}
+            {{- toYaml (default $default.securityContext $value.securityContext) | nindent 12 }}
           command:
-            {{- toYaml $value.dryrunCommand | nindent 12 }}
+            {{- toYaml (default $default.dryrunCommand $value.dryrunCommand) | nindent 12 }}
           volumeMounts:
             - name: fluentd-conf
               mountPath: /fluentd/etc
               readOnly: true
-{{- end -}}
+{{ end }}
 {{- end }}
