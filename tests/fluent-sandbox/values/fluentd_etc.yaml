@@ -1,0 +1,5 @@
+fluentd:
+  - name: fluentd
+    replicas: 2
+  - name: fluent2
+    replicas: 1

@@ -1,0 +1,11 @@
+fluentd:
+  - name: fluentd
+    conf: |
+      config:
+        - source:
+            $type: http
+            bind: 0.0.0.0
+            port: 8080
+        - match:
+            $type: stdout
+            $tag: '**'

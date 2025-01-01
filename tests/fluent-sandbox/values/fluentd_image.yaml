@@ -1,0 +1,4 @@
+fluentd:
+  - name: fluentd
+    image:
+      tag: "edge-debian"

@@ -1,0 +1,4 @@
+fluentd:
+  - name: "fluentd"
+    ports:
+      http: 8080

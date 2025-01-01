@@ -1,0 +1,7 @@
+fluentd:
+  - name: fluentd
+    command:
+      - fluentd
+    dryrunCommand:
+      - fluentd
+      - "--dry-run"

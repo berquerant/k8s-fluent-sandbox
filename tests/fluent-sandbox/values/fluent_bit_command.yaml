@@ -1,0 +1,7 @@
+fluentBit:
+  - name: bit
+    command:
+      - fluent-bit
+    dryrunCommand:
+      - fluent-bit
+      - "--dry-run"

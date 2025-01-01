@@ -1,0 +1,5 @@
+fluentBit:
+  - name: bit
+    replicas: 2
+  - name: bit2
+    replicas: 1

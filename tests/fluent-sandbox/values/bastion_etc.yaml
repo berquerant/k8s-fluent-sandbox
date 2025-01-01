@@ -1,0 +1,5 @@
+bastion:
+  image:
+    tag: "edge-debian"
+  command:
+    - bash

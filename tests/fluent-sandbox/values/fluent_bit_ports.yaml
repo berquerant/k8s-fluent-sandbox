@@ -1,0 +1,4 @@
+fluentBit:
+  - name: "bit"
+    ports:
+      http: 8080

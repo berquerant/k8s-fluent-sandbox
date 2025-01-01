@@ -1,0 +1,681 @@
+---
+# Source: fluent-sandbox/templates/tests/test.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tests-fluent-sandbox-test
+  namespace: default
+  labels:
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: fluent-sandbox/templates/bastion.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tests-fluent-sandbox-bastion
+  labels:
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  send.sh: |-
+    #!/bin/bash
+    
+    usage() {
+        cat <<EOS
+    $0 -- send test data to fluentd
+    
+    TARGET is fluentd.name or fluentBit.name.
+    
+    $0 TARGET PORT http PATH [CURL_OPT...]
+      Send HTTP request to TARGET.
+      https://docs.fluentd.org/input/http
+    
+    $0 TARGET PORT cat TAG [FLUENT_CAT_OPT...]
+      Forward data from stdin to TARGET.
+      https://docs.fluentd.org/deployment/command-line-option#fluent-cat
+    
+    Environment variables:
+      DEBUG
+        Enable debug output if set.
+    
+    Examples:
+    # Post {"msg":"test"} with tag: test.log to fluentd port 28080.
+    $0 fluentd 28080 http /test.log -d 'json={"msg":"test"}'
+    # Forward {"msg":"test"} with tag: test.log to fluentd port 24224.
+    echo '{"msg":"test"}' | $0 fluentd 24224 cat test.log
+    EOS
+    }
+    
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] ; then
+        usage
+        exit
+    fi
+    
+    __log() {
+        echo "$*" > /dev/stderr
+    }
+    
+    __err() {
+        __log "$@"
+        exit 1
+    }
+    
+    target="$1"
+    port="$2"
+    shift 2
+    
+    if [ -z "$target" ] ; then
+        __err "TARGET is required"
+    fi
+    if [ -z "$port" ] ; then
+        __err "PORT is required"
+    fi
+    
+    host="tests-fluent-sandbox-${target}"
+    
+    __http() {
+        _path="$1"
+        if [ -z "$_path" ] ; then
+           __log "PATH is required"
+           return 1
+        fi
+        shift
+        curl "http://${host}:${port}${_path}" "$@"
+    }
+    
+    __cat() {
+        _tag="$1"
+        if [ -z "$_tag" ] ; then
+            __log "TAG is required"
+            return 1
+        fi
+        shift
+        fluent-cat "$_tag" --host "$host" --port "$port" "$@"
+    }
+    
+    cmd="$1"
+    shift
+    
+    set -e
+    if [ -n "$DEBUG" ] ; then
+        set -x
+    fi
+    case "$cmd" in
+        http) __http "$@" ;;
+        cat) __cat "$@" ;;
+        *)
+            usage
+            exit 1
+    esac
+---
+# Source: fluent-sandbox/templates/fluent-bit.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tests-fluent-sandbox-bit
+  labels:
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  fluent-bit.yaml: |-
+    service:
+      flush: 1
+      daemon: off
+      log_level: debug
+    pipeline:
+      inputs:
+        - name: forward
+          listen: 0.0.0.0
+          port: 24224
+        - name: http
+          listen: 0.0.0.0
+          port: 28080
+          tag_key: 'tag'
+      outputs:
+        - name: stdout
+          match: '*'
+---
+# Source: fluent-sandbox/templates/fluentd.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tests-fluent-sandbox-fluentd
+  labels:
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  fluent.conf: |-
+    system:
+      log_level: debug
+    config:
+      - source:
+          $type: forward
+          bind: 0.0.0.0
+          port: 24224
+      - source:
+          $type: http
+          bind: 0.0.0.0
+          port: 28080
+      - match:
+          $type: stdout
+          $tag: '**'
+---
+# Source: fluent-sandbox/templates/tests/test.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tests-fluent-sandbox-test
+  labels:
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  send.sh: |-
+    #!/bin/bash
+    
+    usage() {
+        cat <<EOS
+    $0 -- send test data to fluentd
+    
+    TARGET is fluentd.name or fluentBit.name.
+    
+    $0 TARGET PORT http PATH [CURL_OPT...]
+      Send HTTP request to TARGET.
+      https://docs.fluentd.org/input/http
+    
+    $0 TARGET PORT cat TAG [FLUENT_CAT_OPT...]
+      Forward data from stdin to TARGET.
+      https://docs.fluentd.org/deployment/command-line-option#fluent-cat
+    
+    Environment variables:
+      DEBUG
+        Enable debug output if set.
+    
+    Examples:
+    # Post {"msg":"test"} with tag: test.log to fluentd port 28080.
+    $0 fluentd 28080 http /test.log -d 'json={"msg":"test"}'
+    # Forward {"msg":"test"} with tag: test.log to fluentd port 24224.
+    echo '{"msg":"test"}' | $0 fluentd 24224 cat test.log
+    EOS
+    }
+    
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ] ; then
+        usage
+        exit
+    fi
+    
+    __log() {
+        echo "$*" > /dev/stderr
+    }
+    
+    __err() {
+        __log "$@"
+        exit 1
+    }
+    
+    target="$1"
+    port="$2"
+    shift 2
+    
+    if [ -z "$target" ] ; then
+        __err "TARGET is required"
+    fi
+    if [ -z "$port" ] ; then
+        __err "PORT is required"
+    fi
+    
+    host="tests-fluent-sandbox-${target}"
+    
+    __http() {
+        _path="$1"
+        if [ -z "$_path" ] ; then
+           __log "PATH is required"
+           return 1
+        fi
+        shift
+        curl "http://${host}:${port}${_path}" "$@"
+    }
+    
+    __cat() {
+        _tag="$1"
+        if [ -z "$_tag" ] ; then
+            __log "TAG is required"
+            return 1
+        fi
+        shift
+        fluent-cat "$_tag" --host "$host" --port "$port" "$@"
+    }
+    
+    cmd="$1"
+    shift
+    
+    set -e
+    if [ -n "$DEBUG" ] ; then
+        set -x
+    fi
+    case "$cmd" in
+        http) __http "$@" ;;
+        cat) __cat "$@" ;;
+        *)
+            usage
+            exit 1
+    esac
+---
+# Source: fluent-sandbox/templates/tests/test.yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tests-fluent-sandbox-test
+  namespace: default
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+---
+# Source: fluent-sandbox/templates/tests/test.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tests-fluent-sandbox-test
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: tests-fluent-sandbox-test
+roleRef:
+  kind: Role
+  name: tests-fluent-sandbox-test
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: fluent-sandbox/templates/fluent-bit.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: tests-fluent-sandbox-bit
+  labels:
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ports:
+    - name: forward
+      port: 24224
+    - name: http
+      port: 28080
+  clusterIP: None
+  selector:
+    app: fluent-bit
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+---
+# Source: fluent-sandbox/templates/fluentd.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: tests-fluent-sandbox-fluentd
+  labels:
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ports:
+    - name: forward
+      port: 24224
+    - name: http
+      port: 28080
+  clusterIP: None
+  selector:
+    app: fluentd
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+---
+# Source: fluent-sandbox/templates/bastion.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tests-fluent-sandbox-bastion
+  labels:
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bastion
+      app.kubernetes.io/name: fluent-sandbox
+      app.kubernetes.io/instance: tests
+  template:
+    metadata:
+      annotations:
+        checksum/config: aa1d0f34cc18d4c287f1d74c609a4940ae5f5e20ceb3b0f16f83a0fe7b84978a
+      labels:
+        app: bastion
+        app.kubernetes.io/name: fluent-sandbox
+        app.kubernetes.io/instance: tests
+    spec:
+      volumes:
+        - name: bastion-conf
+          configMap:
+            defaultMode: 0777
+            name: tests-fluent-sandbox-bastion
+      containers:
+        - name: bastion
+          image: "fluent/fluentd:edge-debian"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          command:
+            - bash
+          tty: true
+          volumeMounts:
+            - name: bastion-conf
+              mountPath: /usr/local/bin/send
+              readOnly: true
+              subPath: send.sh
+---
+# Source: fluent-sandbox/templates/fluent-bit.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: tests-fluent-sandbox-bit
+  labels:
+    app: fluent-bit
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  serviceName: tests-fluent-sandbox-bit
+  replicas: 1
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      app: fluent-bit
+      app.kubernetes.io/name: fluent-sandbox
+      app.kubernetes.io/instance: tests
+  template:
+    metadata:
+      annotations:
+        checksum/config: 213b0d8d9c36c1e60ac2631ee310b5b17d243d8326a91b63da91c1e81c757779
+      labels:
+        app: fluent-bit
+        app.kubernetes.io/name: fluent-sandbox
+        app.kubernetes.io/instance: tests
+    spec:
+      restartPolicy: Always
+      volumes:
+        - name: fluent-bit-conf
+          configMap:
+            name: tests-fluent-sandbox-bit
+      containers:
+        - name: fluent-bit
+          image: "fluent/fluent-bit:3.2.4-debug"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          command:
+            - /fluent-bit/bin/fluent-bit
+            - -c
+            - /fluent-bit/etc/fluent-bit.yaml
+          ports:
+            - name: forward
+              containerPort: 24224
+            - name: http
+              containerPort: 28080
+          volumeMounts:
+            - name: fluent-bit-conf
+              mountPath: /fluent-bit/etc
+              readOnly: true
+---
+# Source: fluent-sandbox/templates/fluentd.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: tests-fluent-sandbox-fluentd
+  labels:
+    app: fluentd
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  serviceName: tests-fluent-sandbox-fluentd
+  replicas: 1
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      app: fluentd
+      app.kubernetes.io/name: fluent-sandbox
+      app.kubernetes.io/instance: tests
+  template:
+    metadata:
+      annotations:
+        checksum/config: 9f28e7671ed35574cfc0dc08b2ef72dbc100a1f79d795bc5637245e56259312c
+      labels:
+        app: fluentd
+        app.kubernetes.io/name: fluent-sandbox
+        app.kubernetes.io/instance: tests
+    spec:
+      restartPolicy: Always
+      volumes:
+        - name: fluentd-conf
+          configMap:
+            name: tests-fluent-sandbox-fluentd
+      containers:
+        - name: fluentd
+          image: "fluent/fluentd:v1.18.0-debian-1.0"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          command:
+            - fluentd
+            - --config-file-type
+            - yaml
+            - -c
+            - /fluentd/etc/fluent.conf
+          ports:
+            - name: forward
+              containerPort: 24224
+            - name: http
+              containerPort: 28080
+          volumeMounts:
+            - name: fluentd-conf
+              mountPath: /fluentd/etc
+              readOnly: true
+---
+# Source: fluent-sandbox/templates/tests/test.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tests-fluent-sandbox-test
+  labels:
+    app: test
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  serviceAccountName: tests-fluent-sandbox-test
+  restartPolicy: Never
+  containers:
+    - name: send
+      image: fluent/fluentd:v1.18.0-debian-1.0
+      securityContext:
+        # for apt-get install
+        runAsUser: 0
+      command:
+        - bash
+      args:
+        - "-c"
+        - |
+          set -ex
+
+          apt-get update
+          apt-get install -y curl
+          # install kubectl
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x ./kubectl
+          mv ./kubectl /usr/local/bin/kubectl
+          kubectl version
+
+          wait() {
+            kubectl -n default wait --timeout=60s --for=condition=ready pod -l 'app.kubernetes.io/instance=tests' -l 'app!=test'
+          }
+
+          cnt=0
+          while ! wait ; do
+            if [ $cnt -gt 5 ] ; then
+              exit 1
+            fi
+            sleep 10
+            cnt=$((cnt+1))
+          done
+
+          export DEBUG=1
+          FORWARD_PORT="24224"
+          HTTP_PORT="28080"
+
+          FLUENTD="fluentd"
+          echo '{"msg":"CAT"}' | send "$FLUENTD" "$FORWARD_PORT" cat test.cat
+          send "$FLUENTD" "$HTTP_PORT" http /test.http -d 'json={"msg":"HTTP"}'
+
+          FLUENT_BIT="bit"
+          echo '{"msg":"CAT"}' | send "$FLUENT_BIT" "$FORWARD_PORT" cat test.cat
+          send "$FLUENT_BIT" "$HTTP_PORT" http /test.http -d 'json={"msg":"HTTP"}'
+      volumeMounts:
+        - name: test-conf
+          mountPath: /usr/local/bin/send
+          readOnly: true
+          subPath: send.sh
+  volumes:
+    - name: test-conf
+      configMap:
+        defaultMode: 0777
+        name: tests-fluent-sandbox-test
+---
+# Source: fluent-sandbox/templates/fluent-bit.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tests-fluent-sandbox-bit
+  annotations:
+    "helm.sh/hook": post-upgrade,post-install
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: fluent-bit
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: fluent-bit
+        helm.sh/chart: fluent-sandbox-0.1.0
+        app.kubernetes.io/name: fluent-sandbox
+        app.kubernetes.io/instance: tests
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      restartPolicy: Never
+      volumes:
+        - name: fluent-bit-conf
+          configMap:
+            name: tests-fluent-sandbox-bit
+      containers:
+        - name: dryrun
+          image: "fluent/fluent-bit:3.2.4-debug"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          command:
+            - /fluent-bit/bin/fluent-bit
+            - --dry-run
+            - --verbose
+            - -c
+            - /fluent-bit/etc/fluent-bit.yaml
+          volumeMounts:
+            - name: fluent-bit-conf
+              mountPath: /fluent-bit/etc
+              readOnly: true
+---
+# Source: fluent-sandbox/templates/fluentd.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tests-fluent-sandbox-fluentd
+  annotations:
+    "helm.sh/hook": post-upgrade,post-install
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app: fluentd
+    helm.sh/chart: fluent-sandbox-0.1.0
+    app.kubernetes.io/name: fluent-sandbox
+    app.kubernetes.io/instance: tests
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: fluentd
+        helm.sh/chart: fluent-sandbox-0.1.0
+        app.kubernetes.io/name: fluent-sandbox
+        app.kubernetes.io/instance: tests
+        app.kubernetes.io/version: "1.16.0"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      restartPolicy: Never
+      volumes:
+        - name: fluentd-conf
+          configMap:
+            name: tests-fluent-sandbox-fluentd
+      containers:
+        - name: dryrun
+          image: "fluent/fluentd:v1.18.0-debian-1.0"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          command:
+            - fluentd
+            - --dry-run
+            - --log-event-verbose
+            - --verbose
+            - --config-file-type
+            - yaml
+            - -c
+            - /fluentd/etc/fluent.conf
+          volumeMounts:
+            - name: fluentd-conf
+              mountPath: /fluentd/etc
+              readOnly: true
