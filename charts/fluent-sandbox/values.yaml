@@ -6,6 +6,7 @@ fluentBitEnabled: true
 bastionEnabled: true
 
 defaultFluentd: &defaultFluentd
+  name: ""
   imageRepo: fluent/fluentd
   imageTag: "v1.18.0-debian-1.0"
   imagePullPolicy: IfNotPresent
@@ -67,6 +68,7 @@ fluentd:
   - name: "fluentd"
 
 defaultFluentBit: &defaultFluentBit
+  name: ""
   imageRepo: fluent/fluent-bit
   imageTag: "3.2.4-debug"
   imagePullPolicy: IfNotPresent
