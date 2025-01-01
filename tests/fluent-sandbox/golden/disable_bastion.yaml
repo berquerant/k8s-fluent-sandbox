@@ -6,7 +6,7 @@ metadata:
   name: tests-fluent-sandbox-test
   namespace: default
   labels:
-    helm.sh/chart: fluent-sandbox-0.1.0
+    helm.sh/chart: fluent-sandbox-0.1.1
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -18,7 +18,7 @@ kind: ConfigMap
 metadata:
   name: tests-fluent-sandbox-bit
   labels:
-    helm.sh/chart: fluent-sandbox-0.1.0
+    helm.sh/chart: fluent-sandbox-0.1.1
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -48,7 +48,7 @@ kind: ConfigMap
 metadata:
   name: tests-fluent-sandbox-fluentd
   labels:
-    helm.sh/chart: fluent-sandbox-0.1.0
+    helm.sh/chart: fluent-sandbox-0.1.1
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -76,7 +76,7 @@ kind: ConfigMap
 metadata:
   name: tests-fluent-sandbox-test
   labels:
-    helm.sh/chart: fluent-sandbox-0.1.0
+    helm.sh/chart: fluent-sandbox-0.1.1
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -204,7 +204,7 @@ kind: Service
 metadata:
   name: tests-fluent-sandbox-bit
   labels:
-    helm.sh/chart: fluent-sandbox-0.1.0
+    helm.sh/chart: fluent-sandbox-0.1.1
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -227,7 +227,7 @@ kind: Service
 metadata:
   name: tests-fluent-sandbox-fluentd
   labels:
-    helm.sh/chart: fluent-sandbox-0.1.0
+    helm.sh/chart: fluent-sandbox-0.1.1
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -251,7 +251,7 @@ metadata:
   name: tests-fluent-sandbox-bit
   labels:
     app: fluent-bit
-    helm.sh/chart: fluent-sandbox-0.1.0
+    helm.sh/chart: fluent-sandbox-0.1.1
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -306,7 +306,7 @@ metadata:
   name: tests-fluent-sandbox-fluentd
   labels:
     app: fluentd
-    helm.sh/chart: fluent-sandbox-0.1.0
+    helm.sh/chart: fluent-sandbox-0.1.1
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -363,7 +363,7 @@ metadata:
   name: tests-fluent-sandbox-test
   labels:
     app: test
-    helm.sh/chart: fluent-sandbox-0.1.0
+    helm.sh/chart: fluent-sandbox-0.1.1
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -439,7 +439,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: fluent-bit
-    helm.sh/chart: fluent-sandbox-0.1.0
+    helm.sh/chart: fluent-sandbox-0.1.1
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -450,7 +450,7 @@ spec:
     metadata:
       labels:
         app: fluent-bit
-        helm.sh/chart: fluent-sandbox-0.1.0
+        helm.sh/chart: fluent-sandbox-0.1.1
         app.kubernetes.io/name: fluent-sandbox
         app.kubernetes.io/instance: tests
         app.kubernetes.io/version: "1.16.0"
@@ -488,7 +488,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: fluentd
-    helm.sh/chart: fluent-sandbox-0.1.0
+    helm.sh/chart: fluent-sandbox-0.1.1
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -499,7 +499,7 @@ spec:
     metadata:
       labels:
         app: fluentd
-        helm.sh/chart: fluent-sandbox-0.1.0
+        helm.sh/chart: fluent-sandbox-0.1.1
         app.kubernetes.io/name: fluent-sandbox
         app.kubernetes.io/instance: tests
         app.kubernetes.io/version: "1.16.0"
