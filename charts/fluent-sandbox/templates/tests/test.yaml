@@ -4,7 +4,7 @@
 {{- $namespace := .Release.Namespace -}}
 {{- $fullName := (include "fluent-sandbox.fullname" $dot) -}}
 {{- $testName := printf "%s-test" $fullName -}}
-{{- $fluentdInstance := (first $value.fluentd ) -}}
+{{- $fluentdInstance := (first $value.fluentd) -}}
 {{- $fluentBitInstance := (first $value.fluentBit) -}}
 {{- $fluentdName := $fluentdInstance.name -}}
 {{- $fluentBitName := $fluentBitInstance.name -}}
