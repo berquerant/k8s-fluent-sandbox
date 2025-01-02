@@ -54,3 +54,36 @@ List of StatefulSet and Service of fluent-bit.
 
 The elements will inherit the elements of `defaultFluentBit`.
 Any elements that are not specified will have the same value as the corresponding elements in `defaultFluentBit`.
+
+## Example of forwarding events to `fluentd`
+
+Forward `f1` to `f2`.
+
+``` yaml
+fluentd:
+  - name: f1
+    conf: |
+      config:
+        - source:
+            $type: http
+            bind: 0.0.0.0
+            port: 28080
+        - match:
+            $type: forward
+            $tag: '**'
+            flush_interval: 1s
+            server:
+              - name: f2
+                host: "<RELEASE_NAME>-f2"
+                port: 24224
+  - name: f2
+    conf: |
+      config:
+        - source:
+            $type: forward
+            bind: 0.0.0.0
+            port: 24224
+        - match:
+            $type: stdout
+            $tag: '**'
+```
