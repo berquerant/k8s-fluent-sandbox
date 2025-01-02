@@ -25,6 +25,7 @@ spec:
   selector:
     {{- include "fluent-sandbox.fluentBitAppLabels" $dot | nindent 4 }}
     {{- include "fluent-sandbox.selectorLabels" $dot | nindent 4 }}
+    {{- include "fluent-sandbox.instanceSelectorLabels" $fluentBitName | nindent 4 }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -41,6 +42,7 @@ spec:
     matchLabels:
       {{- include "fluent-sandbox.fluentBitAppLabels" $dot | nindent 6 }}
       {{- include "fluent-sandbox.selectorLabels" $dot | nindent 6 }}
+      {{- include "fluent-sandbox.instanceSelectorLabels" $fluentBitName | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -51,6 +53,7 @@ spec:
       labels:
         {{- include "fluent-sandbox.fluentBitAppLabels" $dot | nindent 8 }}
         {{- include "fluent-sandbox.selectorLabels" $dot | nindent 8 }}
+        {{- include "fluent-sandbox.instanceSelectorLabels" $fluentBitName | nindent 8 }}
         {{- with (default $default.labels $value.labels) }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

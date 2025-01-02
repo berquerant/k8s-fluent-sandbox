@@ -84,3 +84,11 @@ Default http port
 {{- define "fluent-sandbox.defaultHttpPort" -}}
 {{ .Values.defaultFluentd.ports.http }}
 {{- end }}
+
+{{/*
+Application instance selector labels
+*/}}
+{{- define "fluent-sandbox.instanceSelectorLabels" -}}
+{{- $name := . -}}
+app-instance: {{ $name }}
+{{- end }}
