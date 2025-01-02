@@ -323,6 +323,7 @@ spec:
     app: fluent-bit
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
+    app-instance: tests-fluent-sandbox-bit
 ---
 # Source: fluent-sandbox/templates/fluentd.yaml
 apiVersion: v1
@@ -346,6 +347,7 @@ spec:
     app: fluentd
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
+    app-instance: tests-fluent-sandbox-fluentd
 ---
 # Source: fluent-sandbox/templates/bastion.yaml
 apiVersion: apps/v1
@@ -415,6 +417,7 @@ spec:
       app: fluent-bit
       app.kubernetes.io/name: fluent-sandbox
       app.kubernetes.io/instance: tests
+      app-instance: tests-fluent-sandbox-bit
   template:
     metadata:
       annotations:
@@ -423,6 +426,7 @@ spec:
         app: fluent-bit
         app.kubernetes.io/name: fluent-sandbox
         app.kubernetes.io/instance: tests
+        app-instance: tests-fluent-sandbox-bit
     spec:
       restartPolicy: Always
       volumes:
@@ -470,6 +474,7 @@ spec:
       app: fluentd
       app.kubernetes.io/name: fluent-sandbox
       app.kubernetes.io/instance: tests
+      app-instance: tests-fluent-sandbox-fluentd
   template:
     metadata:
       annotations:
@@ -478,6 +483,7 @@ spec:
         app: fluentd
         app.kubernetes.io/name: fluent-sandbox
         app.kubernetes.io/instance: tests
+        app-instance: tests-fluent-sandbox-fluentd
     spec:
       restartPolicy: Always
       volumes:
