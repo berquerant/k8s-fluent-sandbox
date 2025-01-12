@@ -342,7 +342,7 @@ spec:
               set -ex
               apt-get update
               apt-get install -y curl
-              bash
+              exec bash
           tty: true
           volumeMounts:
             - name: bastion-conf
