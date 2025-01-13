@@ -50,19 +50,24 @@
   "packageRules": [
     {
       "addLabels": [
-        "python"
+        "docker"
       ],
       "matchDatasources": [
-        "pypi"
+        "docker"
       ]
-    },
+    }
+  ],
+  "customManagers": [
     {
-      "addLabels": [
-        "docker"
+      "customType": "regex",
+      "description": "Manage image version",
+      "fileMatch": [
+        "^charts/fluent-sandbox/values.yaml$"
       ],
-      "matchDatasources": [
-        "docker"
-      ]
+      "matchStrings": [
+        "imageRepo: (?<depName>.*)\\s+imageTag: \"(?<currentValue>.*)\"$"
+      ],
+      "datasourceTemplate": "docker"
     }
   ]
 }
