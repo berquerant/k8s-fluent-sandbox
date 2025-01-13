@@ -65,7 +65,7 @@
         "^charts/fluent-sandbox/values.yaml$"
       ],
       "matchStrings": [
-        "imageRepo: (?<depName>.*)\\s+imageTag: \"(?<currentValue>.*)\"$"
+        "^\\s*imageRepo: (?<depName>.*)\\s*imageTag: \"(?<currentValue>.*)\"$"
       ],
       "datasourceTemplate": "docker"
     }
