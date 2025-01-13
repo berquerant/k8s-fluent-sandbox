@@ -56,18 +56,5 @@
         "docker"
       ]
     }
-  ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "description": "Manage image version",
-      "fileMatch": [
-        "^charts/fluent-sandbox/values.yaml$"
-      ],
-      "matchStrings": [
-        "^\\s*imageRepo: (?<depName>.*)\\s*imageTag: \"(?<currentValue>.*)\"$"
-      ],
-      "datasourceTemplate": "docker"
-    }
   ]
 }
