@@ -1,3 +1,4 @@
 fluentBit:
   - name: bit
-    imageTag: "latest-debug"
+    image:
+      tag: "latest-debug"

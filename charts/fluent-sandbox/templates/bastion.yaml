@@ -52,8 +52,8 @@ spec:
             name: {{ $bastionName }}
       containers:
         - name: bastion
-          image: "{{ $value.imageRepo }}:{{ $value.imageTag }}"
-          imagePullPolicy: {{ $value.imagePullPolicy }}
+          image: "{{ $value.image.repository }}:{{ $value.image.tag }}"
+          imagePullPolicy: {{ $value.image.pullPolicy }}
           securityContext:
             {{- toYaml $value.securityContext | nindent 12 }}
           {{- with $value.command }}
