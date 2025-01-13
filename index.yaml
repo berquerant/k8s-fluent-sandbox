@@ -3,6 +3,22 @@ entries:
   fluent-sandbox:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2025-01-13T19:51:19.202065869Z"
+    description: A Helm chart for fluent sandbox
+    digest: 4e7cf171b5e346984beab8d075b1ae78c944685ac7cb5718b61a8f74ad9544f9
+    home: https://github.com/berquerant/k8s-fluent-sandbox
+    keywords:
+    - fluent
+    - sandbox
+    maintainers:
+    - name: berquerant
+    name: fluent-sandbox
+    type: application
+    urls:
+    - https://github.com/berquerant/k8s-fluent-sandbox/releases/download/fluent-sandbox-0.4.0/fluent-sandbox-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2025-01-02T04:55:55.240946313Z"
     description: A Helm chart for fluent sandbox
     digest: 9c4c38ed5b042bd4295a8e7f723936552156a18814dfe1f5a218159979600dc5
@@ -49,4 +65,4 @@ entries:
     urls:
     - https://github.com/berquerant/k8s-fluent-sandbox/releases/download/fluent-sandbox-0.1.1/fluent-sandbox-0.1.1.tgz
     version: 0.1.1
-generated: "2025-01-02T04:55:55.240954568Z"
+generated: "2025-01-13T19:51:19.202105533Z"
