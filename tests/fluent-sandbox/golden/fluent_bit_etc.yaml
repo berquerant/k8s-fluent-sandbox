@@ -495,7 +495,7 @@ spec:
             name: tests-fluent-sandbox-bit
       containers:
         - name: fluent-bit
-          image: "fluent/fluent-bit:3.2.5-debug"
+          image: "fluent/fluent-bit:3.2.6-debug"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
@@ -552,7 +552,7 @@ spec:
             name: tests-fluent-sandbox-bit2
       containers:
         - name: fluent-bit
-          image: "fluent/fluent-bit:3.2.5-debug"
+          image: "fluent/fluent-bit:3.2.6-debug"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
@@ -736,7 +736,7 @@ spec:
             name: tests-fluent-sandbox-bit
       containers:
         - name: dryrun
-          image: "fluent/fluent-bit:3.2.5-debug"
+          image: "fluent/fluent-bit:3.2.6-debug"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
@@ -785,7 +785,7 @@ spec:
             name: tests-fluent-sandbox-bit2
       containers:
         - name: dryrun
-          image: "fluent/fluent-bit:3.2.5-debug"
+          image: "fluent/fluent-bit:3.2.6-debug"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
