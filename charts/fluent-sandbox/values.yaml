@@ -9,7 +9,7 @@ defaultFluentd: &defaultFluentd
   name: ""
   image:
     repository: fluent/fluentd
-    tag: "v1.18.0-debian-1.0"
+    tag: "v1.19.0-debian-1.0"
     pullPolicy: IfNotPresent
   command:
     - fluentd
@@ -132,7 +132,7 @@ fluentBit:
 bastion:
   image:
     repository: fluent/fluentd
-    tag: "v1.18.0-debian-1.0"
+    tag: "v1.19.0-debian-1.0"
     pullPolicy: IfNotPresent
   command:
     - bash
