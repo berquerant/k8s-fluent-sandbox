@@ -74,7 +74,7 @@ fluentd:
             flush_interval: 1s
             server:
               - name: f2
-                host: "<RELEASE_NAME>-f2"
+                host: "<RELEASE_NAME>-fluent-sandbox-f2"
                 port: 24224
   - name: f2
     conf: |
@@ -86,4 +86,11 @@ fluentd:
         - match:
             $type: stdout
             $tag: '**'
+```
+
+Send a log:
+
+``` shell
+# at bastion
+send f1 28080 http /test.log -d 'json={"msg":"test"}'
 ```
