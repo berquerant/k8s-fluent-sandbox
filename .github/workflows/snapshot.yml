@@ -58,10 +58,9 @@ jobs:
       - name: move golden
         run: mv tests/${CHART_NAME}/golden .
       - name: objdiff
-        uses: berquerant/k8s-object-diff@v0.2.0
+        uses: berquerant/k8s-object-diff@v0.3.0
         id: objdiff
         with:
           left: golden/${{ matrix.value }}
           right: generated/${{ matrix.value }}
-      - name: exit
-        run: exit ${{ steps.objdiff.outputs.status }}
+          fail-on-diff: true
