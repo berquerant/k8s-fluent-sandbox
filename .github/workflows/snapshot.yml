@@ -19,7 +19,7 @@ jobs:
     outputs:
       values: ${{ steps.set-matrix.outputs.values }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: generate matrix values
         id: set-matrix
         run: echo "values=$(.github/generate-snapshot-matrix.sh)" >> "$GITHUB_OUTPUT"
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: generate manifests
         run: |
           tests/generate.sh gen "$CHART_NAME" generated
@@ -49,7 +49,7 @@ jobs:
       matrix:
         value: ${{ fromJson(needs.generate-matrix.outputs.values) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: download artifacts
         uses: actions/download-artifact@v5
         with:
