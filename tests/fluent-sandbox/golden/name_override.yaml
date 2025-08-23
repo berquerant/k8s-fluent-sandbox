@@ -6,7 +6,7 @@ metadata:
   name: tests-overrided-test
   namespace: default
   labels:
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -18,7 +18,7 @@ kind: ConfigMap
 metadata:
   name: tests-overrided-bastion
   labels:
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -121,7 +121,7 @@ kind: ConfigMap
 metadata:
   name: tests-overrided-bit
   labels:
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -151,7 +151,7 @@ kind: ConfigMap
 metadata:
   name: tests-overrided-fluentd
   labels:
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -179,7 +179,7 @@ kind: ConfigMap
 metadata:
   name: tests-overrided-test
   labels:
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -307,7 +307,7 @@ kind: Service
 metadata:
   name: tests-overrided-bit
   labels:
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -331,7 +331,7 @@ kind: Service
 metadata:
   name: tests-overrided-fluentd
   labels:
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -355,7 +355,7 @@ kind: Deployment
 metadata:
   name: tests-overrided-bastion
   labels:
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -409,7 +409,7 @@ metadata:
   name: tests-overrided-bit
   labels:
     app: fluent-bit
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -466,7 +466,7 @@ metadata:
   name: tests-overrided-fluentd
   labels:
     app: fluentd
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -525,7 +525,7 @@ metadata:
   name: tests-overrided-test
   labels:
     app: test
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -601,7 +601,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: fluent-bit
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -612,7 +612,7 @@ spec:
     metadata:
       labels:
         app: fluent-bit
-        helm.sh/chart: fluent-sandbox-0.5.0
+        helm.sh/chart: fluent-sandbox-0.5.1
         app.kubernetes.io/name: overrided
         app.kubernetes.io/instance: tests
         app.kubernetes.io/version: "1.16.0"
@@ -650,7 +650,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
   labels:
     app: fluentd
-    helm.sh/chart: fluent-sandbox-0.5.0
+    helm.sh/chart: fluent-sandbox-0.5.1
     app.kubernetes.io/name: overrided
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
@@ -661,7 +661,7 @@ spec:
     metadata:
       labels:
         app: fluentd
-        helm.sh/chart: fluent-sandbox-0.5.0
+        helm.sh/chart: fluent-sandbox-0.5.1
         app.kubernetes.io/name: overrided
         app.kubernetes.io/instance: tests
         app.kubernetes.io/version: "1.16.0"
