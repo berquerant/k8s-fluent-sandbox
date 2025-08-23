@@ -10,6 +10,13 @@ helm repo update
 helm install <RELEASE_NAME> fluent-sandbox/fluent-sandbox
 ```
 
+or
+
+``` shell
+helm install <RELEASE_NAME> oci://ghcr.io/berquerant/k8s-fluent-sandbox/charts/fluent-sandbox
+```
+
+
 ## Usage
 
 ``` shell
