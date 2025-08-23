@@ -7,8 +7,6 @@
     ":timezone(Asia/Tokyo)",
     ":rebaseStalePrs",
     ":disableDependencyDashboard",
-    ":automergePatch",
-    ":automergeDigest",
     "schedule:weekends"
   ],
   "ignorePaths": [
@@ -17,7 +15,7 @@
   "github-actions": {
     "enabled": false
   },
-  "platformAutomerge": true,
+  "platformAutomerge": false,
   "baseBranches": [
     "main"
   ],
