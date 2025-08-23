@@ -11,6 +11,7 @@ jobs:
   release:
     permissions:
       contents: write
+      packages: write
     name: Release
     runs-on: ubuntu-latest
     steps:
@@ -21,9 +22,29 @@ jobs:
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.18.6
+      - name: Login to ghcr
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
         with:
           skip_existing: true
         env:
           CR_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      - name: Push to ghcr
+        run: |
+          set -x
+          remote_url="oci://ghcr.io/berquerant/k8s-fluent-sandbox/charts"
+          find .cr-release-packages -type f | while read -r package ; do
+            name="$(helm show chart "$package" | yq .name)"
+            version="$(helm show chart "$package" | yq .version)"
+            if ! helm pull "${remote_url}/${name}:${version}" ; then
+              helm push "$package" "$remote_url"
+            fi
+          done
