@@ -22,7 +22,7 @@ jobs:
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-      - uses: azure/setup-helm@v4.3.0
+      - uses: azure/setup-helm@v4.3.1
         with:
           version: v3.18.6
       - name: Login to ghcr
