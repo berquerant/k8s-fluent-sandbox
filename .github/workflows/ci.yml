@@ -33,10 +33,14 @@ jobs:
           exec: helm lint --strict "$CHART_NAME"
 
       - name: Run chart-testing (lint)
-        run: ct lint --charts "$CHART_NAME" --target-branch ${{ github.event.repository.default_branch }}
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+        run: ct lint --charts "$CHART_NAME" --target-branch $TARGET_BRANCH
 
       - name: Create kind cluster
         uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3 # v1.12.0
 
       - name: Run chart-testing (install)
-        run: ct install --charts "$CHART_NAME" --target-branch ${{ github.event.repository.default_branch }}
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+        run: ct install --charts "$CHART_NAME" --target-branch $TARGET_BRANCH
