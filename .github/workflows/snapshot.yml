@@ -20,7 +20,7 @@ jobs:
     outputs:
       values: ${{ steps.set-matrix.outputs.values }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: generate matrix values
         id: set-matrix
         run: echo "values=$(.github/generate-snapshot-matrix.sh)" >> "$GITHUB_OUTPUT"
@@ -31,13 +31,13 @@ jobs:
       contents: read
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: generate manifests
         run: |
           tests/generate.sh gen "$CHART_NAME" generated
           mv tests/${CHART_NAME}/generated .
       - name: upload manifests
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: generated-manifests
           path: generated
@@ -56,16 +56,16 @@ jobs:
       matrix:
         value: ${{ fromJson(needs.generate-matrix.outputs.values) }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: download artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: generated-manifests
           path: generated
       - name: move golden
         run: mv tests/${CHART_NAME}/golden .
       - name: objdiff
-        uses: berquerant/k8s-object-diff@v0.3.0
+        uses: berquerant/k8s-object-diff@9360b93166f36e5147e1abfeaf5a62b3837ed7bd # v0.3.0
         id: objdiff
         with:
           left: golden/${{ matrix.value }}
