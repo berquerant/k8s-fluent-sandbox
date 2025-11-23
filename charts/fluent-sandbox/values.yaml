@@ -72,7 +72,7 @@ defaultFluentBit: &defaultFluentBit
   name: ""
   image:
     repository: fluent/fluent-bit
-    tag: "4.1.1-debug"
+    tag: "4.2.0-debug"
     pullPolicy: IfNotPresent
   command:
     - /fluent-bit/bin/fluent-bit
