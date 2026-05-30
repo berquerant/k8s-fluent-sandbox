@@ -114,6 +114,8 @@ data:
             usage
             exit 1
     esac
+    
+
 ---
 # Source: fluent-sandbox/templates/fluent-bit.yaml
 apiVersion: v1
@@ -328,6 +330,7 @@ roleRef:
   kind: Role
   name: tests-fluent-sandbox-test
   apiGroup: rbac.authorization.k8s.io
+
 ---
 # Source: fluent-sandbox/templates/fluent-bit.yaml
 apiVersion: v1
@@ -493,7 +496,7 @@ spec:
             name: tests-fluent-sandbox-bit
       containers:
         - name: fluent-bit
-          image: "fluent/fluent-bit:5.0.4-debug"
+          image: "fluent/fluent-bit:5.0.5-debug"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
@@ -736,7 +739,7 @@ spec:
             name: tests-fluent-sandbox-bit
       containers:
         - name: dryrun
-          image: "fluent/fluent-bit:5.0.4-debug"
+          image: "fluent/fluent-bit:5.0.5-debug"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
@@ -750,6 +753,8 @@ spec:
             - name: fluent-bit-conf
               mountPath: /fluent-bit/etc
               readOnly: true
+
+
 ---
 # Source: fluent-sandbox/templates/fluentd.yaml
 apiVersion: batch/v1
@@ -854,3 +859,5 @@ spec:
             - name: fluentd-conf
               mountPath: /fluentd/etc
               readOnly: true
+
+
