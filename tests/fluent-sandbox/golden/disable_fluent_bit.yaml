@@ -114,6 +114,8 @@ data:
             usage
             exit 1
     esac
+    
+
 ---
 # Source: fluent-sandbox/templates/fluentd.yaml
 apiVersion: v1
@@ -270,6 +272,7 @@ roleRef:
   kind: Role
   name: tests-fluent-sandbox-test
   apiGroup: rbac.authorization.k8s.io
+
 ---
 # Source: fluent-sandbox/templates/fluentd.yaml
 apiVersion: v1
@@ -531,3 +534,5 @@ spec:
             - name: fluentd-conf
               mountPath: /fluentd/etc
               readOnly: true
+
+
