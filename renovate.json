@@ -6,9 +6,6 @@
   "ignorePaths": [
     "tests/**"
   ],
-  "github-actions": {
-    "enabled": false
-  },
   "platformAutomerge": false,
   "baseBranches": [
     "main"
