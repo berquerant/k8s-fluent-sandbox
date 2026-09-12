@@ -11,6 +11,7 @@ metadata:
     app.kubernetes.io/instance: tests
     app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Helm
+
 ---
 # Source: fluent-sandbox/templates/fluent-bit.yaml
 apiVersion: v1
@@ -41,6 +42,8 @@ data:
       outputs:
         - name: stdout
           match: '*'
+    
+
 ---
 # Source: fluent-sandbox/templates/fluentd.yaml
 apiVersion: v1
@@ -69,6 +72,8 @@ data:
       - match:
           $type: stdout
           $tag: '**'
+    
+
 ---
 # Source: fluent-sandbox/templates/tests/test.yaml
 apiVersion: v1
@@ -172,6 +177,8 @@ data:
             usage
             exit 1
     esac
+    
+
 ---
 # Source: fluent-sandbox/templates/tests/test.yaml
 kind: Role
@@ -183,6 +190,7 @@ rules:
 - apiGroups: [""]
   resources: ["pods"]
   verbs: ["get", "watch", "list"]
+
 ---
 # Source: fluent-sandbox/templates/tests/test.yaml
 kind: RoleBinding
@@ -222,6 +230,7 @@ spec:
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app-instance: tests-fluent-sandbox-bit
+
 ---
 # Source: fluent-sandbox/templates/fluentd.yaml
 apiVersion: v1
@@ -246,6 +255,7 @@ spec:
     app.kubernetes.io/name: fluent-sandbox
     app.kubernetes.io/instance: tests
     app-instance: tests-fluent-sandbox-fluentd
+
 ---
 # Source: fluent-sandbox/templates/fluent-bit.yaml
 apiVersion: apps/v1
@@ -286,7 +296,7 @@ spec:
             name: tests-fluent-sandbox-bit
       containers:
         - name: fluent-bit
-          image: "fluent/fluent-bit:5.0.9-debug"
+          image: "fluent/fluent-bit:5.1.1-debug"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
@@ -303,6 +313,7 @@ spec:
             - name: fluent-bit-conf
               mountPath: /fluent-bit/etc
               readOnly: true
+
 ---
 # Source: fluent-sandbox/templates/fluentd.yaml
 apiVersion: apps/v1
@@ -435,6 +446,7 @@ spec:
       configMap:
         defaultMode: 0777
         name: tests-fluent-sandbox-test
+
 ---
 # Source: fluent-sandbox/templates/fluent-bit.yaml
 apiVersion: batch/v1
@@ -470,7 +482,7 @@ spec:
             name: tests-fluent-sandbox-bit
       containers:
         - name: dryrun
-          image: "fluent/fluent-bit:5.0.9-debug"
+          image: "fluent/fluent-bit:5.1.1-debug"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
