@@ -71,7 +71,7 @@ jobs:
       - name: move golden
         run: mv tests/${CHART_NAME}/golden .
       - name: objdiff
-        uses: berquerant/k8s-object-diff@5696e783f1fe301abe65b2794e6f05666b273842 # v0.5.0
+        uses: berquerant/k8s-object-diff@4cf82d66d3d1a9ae6e46440a7f38316c426fb02b # v0.6.0
         id: objdiff
         with:
           left: golden/${{ matrix.value }}
