@@ -13,7 +13,7 @@ workflows:
         - 'actions/checkout@v7.0.1'
         - 'azure/setup-helm@v5.0.1'
         - 'docker/login-action@v4.7.0'
-        - 'helm/chart-releaser-action@v1.8.0'
+        - 'helm/chart-releaser-action@v1.9.0'
     '.github/workflows/snapshot.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/download-artifact@v8.0.2'
@@ -55,9 +55,9 @@ dependencies:
         commit: 'sha1-81c6f93d4bc991e510b342a00b419b3bb4efc5c6'
         owner_id: 5429470
         repo_id: 287743349
-    'helm/chart-releaser-action@v1.8.0':
-        ref: 'v1.8.0'
-        commit: 'sha1-df287104677278f869ca5480bd260358397cc3f9'
+    'helm/chart-releaser-action@v1.9.0':
+        ref: 'v1.9.0'
+        commit: 'sha1-92c6b97fa9f664492a2592e0d1d80bc6bf378957'
         owner_id: 15859888
         repo_id: 223775198
     'helm/chart-testing-action@v2.9.0':
