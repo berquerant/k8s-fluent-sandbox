@@ -38,7 +38,7 @@ jobs:
         run: ct lint --charts "$CHART_NAME" --target-branch $TARGET_BRANCH
 
       - name: Create kind cluster
-        uses: helm/kind-action@v1.15.1
+        uses: helm/kind-action@v1.15.2
 
       - name: Run chart-testing (install)
         env:

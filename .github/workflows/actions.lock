@@ -7,7 +7,7 @@ workflows:
         - 'actions/checkout@v7.0.1'
         - 'azure/setup-helm@v5.0.1'
         - 'helm/chart-testing-action@v2.9.0'
-        - 'helm/kind-action@v1.15.1'
+        - 'helm/kind-action@v1.15.2'
         - 'wyrihaximus/github-action-helm3@v4.0.2'
     '.github/workflows/release.yml':
         - 'actions/checkout@v7.0.1'
@@ -68,9 +68,9 @@ dependencies:
         uses:
             - 'astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7'
             - 'sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6'
-    'helm/kind-action@v1.15.1':
-        ref: 'v1.15.1'
-        commit: 'sha1-1544676c07bb3570fcb70166beaa07c4528fd4aa'
+    'helm/kind-action@v1.15.2':
+        ref: 'v1.15.2'
+        commit: 'sha1-ea822c7bf1874f08e5a491df991c228edffc3376'
         owner_id: 15859888
         repo_id: 224289715
     'sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6':
