@@ -12,7 +12,7 @@ workflows:
     '.github/workflows/release.yml':
         - 'actions/checkout@v7.0.1'
         - 'azure/setup-helm@v5.1.0'
-        - 'docker/login-action@v4.7.0'
+        - 'docker/login-action@v4.8.0'
         - 'helm/chart-releaser-action@v1.9.0'
     '.github/workflows/snapshot.yml':
         - 'actions/checkout@v7.0.1'
@@ -50,9 +50,9 @@ dependencies:
         commit: 'sha1-4cf82d66d3d1a9ae6e46440a7f38316c426fb02b'
         owner_id: 41062858
         repo_id: 907388775
-    'docker/login-action@v4.7.0':
-        ref: 'v4.7.0'
-        commit: 'sha1-81c6f93d4bc991e510b342a00b419b3bb4efc5c6'
+    'docker/login-action@v4.8.0':
+        ref: 'v4.8.0'
+        commit: 'sha1-8aa5831fb8d48d8f76594c7ddde61ae58019f550'
         owner_id: 5429470
         repo_id: 287743349
     'helm/chart-releaser-action@v1.9.0':
