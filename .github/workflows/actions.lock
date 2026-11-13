@@ -5,13 +5,13 @@ version: 'v0.0.3'
 workflows:
     '.github/workflows/ci.yml':
         - 'actions/checkout@v7.0.1'
-        - 'azure/setup-helm@v5.0.1'
+        - 'azure/setup-helm@v5.1.0'
         - 'helm/chart-testing-action@v2.9.0'
         - 'helm/kind-action@v1.15.2'
         - 'wyrihaximus/github-action-helm3@v4.0.2'
     '.github/workflows/release.yml':
         - 'actions/checkout@v7.0.1'
-        - 'azure/setup-helm@v5.0.1'
+        - 'azure/setup-helm@v5.1.0'
         - 'docker/login-action@v4.7.0'
         - 'helm/chart-releaser-action@v1.9.0'
     '.github/workflows/snapshot.yml':
@@ -40,9 +40,9 @@ dependencies:
         commit: 'sha1-c18668ad3cf93ea998bef934396af7bb5c839dc7'
         owner_id: 115962839
         repo_id: 846733598
-    'azure/setup-helm@v5.0.1':
-        ref: 'v5.0.1'
-        commit: 'sha1-9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310'
+    'azure/setup-helm@v5.1.0':
+        ref: 'v5.1.0'
+        commit: 'sha1-2f5e7bc67f1f9972ab16657bb795f36d8f04de0e'
         owner_id: 6844498
         repo_id: 210310251
     'berquerant/k8s-object-diff@v0.6.0':
