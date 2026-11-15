@@ -396,7 +396,7 @@ spec:
             name: tests-fluent-sandbox-bastion
       containers:
         - name: bastion
-          image: "fluent/fluentd:v1.19.0-debian-1.0"
+          image: "fluent/fluentd:v1.20.1-debian-1.0"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
@@ -513,7 +513,7 @@ spec:
             name: tests-fluent-sandbox-fluentd
       containers:
         - name: fluentd
-          image: "fluent/fluentd:v1.19.0-debian-1.0"
+          image: "fluent/fluentd:v1.20.1-debian-1.0"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
@@ -692,7 +692,7 @@ spec:
             name: tests-fluent-sandbox-fluentd
       containers:
         - name: dryrun
-          image: "fluent/fluentd:v1.19.0-debian-1.0"
+          image: "fluent/fluentd:v1.20.1-debian-1.0"
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
