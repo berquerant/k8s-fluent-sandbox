@@ -44,3 +44,8 @@ jobs:
         env:
           TARGET_BRANCH: ${{ github.event.repository.default_branch }}
         run: ct install --charts "$CHART_NAME" --target-branch $TARGET_BRANCH
+
+  actions-lock-verify:
+    permissions:
+      contents: read
+    uses: berquerant/reusable-workflows/.github/workflows/actions-lock-verify.yml@v0.1.0
