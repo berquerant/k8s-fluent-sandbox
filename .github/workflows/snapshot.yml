@@ -8,72 +8,14 @@ on:
       - main
   pull_request:
 
-env:
-  CHART_NAME: fluent-sandbox
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  generate-matrix:
-    runs-on: ubuntu-latest
+  snapshot:
     permissions:
       contents: read
-    timeout-minutes: 5
-    outputs:
-      values: ${{ steps.set-matrix.outputs.values }}
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-      - name: generate matrix values
-        id: set-matrix
-        run: echo "values=$(.github/generate-snapshot-matrix.sh)" >> "$GITHUB_OUTPUT"
-
-  generate-manifests:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-      - name: generate manifests
-        run: |
-          tests/generate.sh gen "$CHART_NAME" generated
-          mv tests/${CHART_NAME}/generated .
-      - name: upload manifests
-        uses: actions/upload-artifact@v7.0.2
-        with:
-          name: generated-manifests
-          path: generated
-          retention-days: 1
-
-  test:
-    needs:
-      - generate-matrix
-      - generate-manifests
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    timeout-minutes: 5
-    strategy:
-      fail-fast: false
-      matrix:
-        value: ${{ fromJson(needs.generate-matrix.outputs.values) }}
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-      - name: download artifacts
-        uses: actions/download-artifact@v8.0.2
-        with:
-          name: generated-manifests
-          path: generated
-      - name: move golden
-        run: mv tests/${CHART_NAME}/golden .
-      - name: objdiff
-        uses: berquerant/k8s-object-diff@v0.6.0
-        id: objdiff
-        with:
-          left: golden/${{ matrix.value }}
-          right: generated/${{ matrix.value }}
-          fail-on-diff: true
+    uses: berquerant/reusable-workflows/.github/workflows/helm-chart-snapshot.yml@v0.2.0
+    with:
+      chart-name: fluent-sandbox
