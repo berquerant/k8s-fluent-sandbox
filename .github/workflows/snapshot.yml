@@ -16,6 +16,6 @@ jobs:
   snapshot:
     permissions:
       contents: read
-    uses: berquerant/reusable-workflows/.github/workflows/helm-chart-snapshot.yml@v0.2.0
+    uses: berquerant/reusable-workflows/.github/workflows/helm-chart-snapshot.yml@v0.2.1
     with:
       chart-name: fluent-sandbox

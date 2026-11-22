@@ -18,6 +18,6 @@ jobs:
     permissions:
       contents: write
       packages: write
-    uses: berquerant/reusable-workflows/.github/workflows/helm-chart-release.yml@v0.2.0
+    uses: berquerant/reusable-workflows/.github/workflows/helm-chart-release.yml@v0.2.1
     with:
       helm-version: v4.3.2
