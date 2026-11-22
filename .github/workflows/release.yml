@@ -9,46 +9,15 @@ on:
     paths:
       - 'charts/**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release:
     permissions:
       contents: write
       packages: write
-    name: Release
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-      - uses: azure/setup-helm@v5.1.0
-        with:
-          version: v4.3.2
-      - name: Login to ghcr
-        uses: docker/login-action@v4.8.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.9.0
-        with:
-          skip_existing: true
-        env:
-          CR_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      - name: Push to ghcr
-        run: |
-          set -x
-          remote_url="oci://ghcr.io/berquerant/k8s-fluent-sandbox/charts"
-          find .cr-release-packages -type f | while read -r package ; do
-            name="$(helm show chart "$package" | yq .name)"
-            version="$(helm show chart "$package" | yq .version)"
-            if ! helm pull "${remote_url}/${name}:${version}" ; then
-              helm push "$package" "$remote_url"
-            fi
-          done
+    uses: berquerant/reusable-workflows/.github/workflows/helm-chart-release.yml@v0.2.1
+    with:
+      helm-version: v4.3.2
