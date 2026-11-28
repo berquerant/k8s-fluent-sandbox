@@ -16,11 +16,11 @@ jobs:
   ci:
     permissions:
       contents: read
-    uses: berquerant/reusable-workflows/.github/workflows/helm-chart-ci.yml@v0.2.1
+    uses: berquerant/reusable-workflows/.github/workflows/helm-chart-ci.yml@v0.10.1
     with:
       chart-dir: charts/fluent-sandbox
 
   actions-lock-verify:
     permissions:
       contents: read
-    uses: berquerant/reusable-workflows/.github/workflows/actions-lock-verify.yml@v0.2.1
+    uses: berquerant/reusable-workflows/.github/workflows/actions-lock-verify.yml@v0.10.1
